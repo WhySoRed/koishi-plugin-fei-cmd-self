@@ -1,6 +1,7 @@
 {
   "name": "koishi-plugin-fei-cmd-self",
-  "description": "允许机器人账号发送的消息触发指令",
+  "description": "允许机器人账号发生的消息触发指令",
+  "homepage": "",
   "version": "0.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -8,14 +9,16 @@
     "lib",
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhySoRed/koishi-plugin-fei-cmd-self"
+  },
   "license": "MIT",
-  "scripts": {},
   "keywords": [
     "chatbot",
     "koishi",
     "plugin"
   ],
-  "devDependencies": {},
   "peerDependencies": {
     "koishi": "^4.17.8"
   }
