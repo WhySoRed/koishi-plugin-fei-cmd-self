@@ -1,8 +1,7 @@
 {
   "name": "koishi-plugin-fei-cmd-self",
-  "description": "允许机器人账号发生的消息触发指令",
-  "homepage": "",
-  "version": "0.0.1",
+  "description": "允许机器人账号发送的消息触发指令",
+  "version": "0.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [

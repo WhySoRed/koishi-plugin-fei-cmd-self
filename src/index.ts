@@ -24,7 +24,7 @@ llonebot需要在其插件界面设置中打开“上报Bot自身发送的消息
 <p>触发自身指令可能会导致严重的死循环问题</p>
 <p>请在知晓风险的情况下，谨慎决定是否开启</p>
 </div>
-` + (botList ? `## 当前所有bot：\n<pre>${botList.join("\n")}</pre>` : "");
+` + (botList ? `\n## 当前所有bot：\n<pre>${botList.join("\n")}</pre>` : "");
 
 export let usage = usageTemp();
 export interface Config {
@@ -60,14 +60,15 @@ export function apply(ctx: Context, config: Config) {
   };
 
   if (config.switch) {
-    let lastSelfCmdTime = 0;
 
+    let lastSelfCmdTime = 0;
     ctx.on("message", async (session) => {
       if (!config.selfIdArr.includes(session.bot.selfId)) return;
       if (Date.now() - lastSelfCmdTime < config.debounce) return;
       if (session.userId === session.bot.selfId)
-        session.execute(session.content);
+        await session.execute(session.content);
       lastSelfCmdTime = Date.now();
     });
+
   }
 }
