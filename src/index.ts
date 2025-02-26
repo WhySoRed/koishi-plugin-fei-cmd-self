@@ -1,4 +1,5 @@
-import { Context, Schema, User } from "koishi";
+import { log } from "console";
+import { Context, Logger, Schema, User } from "koishi";
 
 export const name = "fei-cmd-self";
 
@@ -46,6 +47,9 @@ export const Config: Schema<Config> = Schema.object({
 });
 
 export function apply(ctx: Context, config: Config) {
+  // 日志
+  const logger = new Logger(name)
+
   if (ctx.bots.length) {
     const botList = ctx.bots.map(
       (bot) =>
@@ -60,15 +64,25 @@ export function apply(ctx: Context, config: Config) {
   };
 
   if (config.switch) {
-
     let lastSelfCmdTime = 0;
+  
     ctx.on("message", async (session) => {
+      // 获取指令前缀
+      const prefix: string = session.resolve(session.app.koishi.config.prefix)[0] ?? '';
+  
+      // 检查是否为目标机器人
       if (!config.selfIdArr.includes(session.bot.selfId)) return;
       if (Date.now() - lastSelfCmdTime < config.debounce) return;
-      if (session.userId === session.bot.selfId)
-        await session.execute(session.content);
+      
+      // 判断指令前缀
+      if (!session.content.startsWith(prefix)) return;
+  
+      const command = session.content.slice(prefix.length).trim();
+      if (session.userId === session.bot.selfId) {
+        await session.execute(command);
+      }
+  
       lastSelfCmdTime = Date.now();
     });
-
   }
 }
