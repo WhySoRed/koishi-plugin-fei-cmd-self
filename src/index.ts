@@ -48,7 +48,7 @@ export const Config: Schema<Config> = Schema.object({
 
 export function apply(ctx: Context, config: Config) {
   // 日志
-  const logger = new Logger(name)
+  const logger = new Logger(name);
 
   if (ctx.bots.length) {
     const botList = ctx.bots.map(
@@ -61,28 +61,30 @@ export function apply(ctx: Context, config: Config) {
         bot.selfId
     );
     usage = usageTemp(botList);
-  };
+  }
 
   if (config.switch) {
     let lastSelfCmdTime = 0;
-  
+
     ctx.on("message", async (session) => {
-      // 获取指令前缀
-      const prefix: string = session.resolve(session.app.koishi.config.prefix)[0] ?? '';
-  
-      // 检查是否为目标机器人
+      // 获取指令前缀列表
+      const prefixList: string[] = session.resolve(session.app.koishi.config.prefix);
+    
+      // 检查是否为目标机器人,并判断冷却时间
       if (!config.selfIdArr.includes(session.bot.selfId)) return;
       if (Date.now() - lastSelfCmdTime < config.debounce) return;
-      
-      // 判断指令前缀
-      if (!session.content.startsWith(prefix)) return;
-  
-      const command = session.content.slice(prefix.length).trim();
-      if (session.userId === session.bot.selfId) {
+      if (session.userId !== session.bot.selfId) return;
+    
+      // 检查是否以任意一个前缀开始
+      const matchingPrefix = prefixList.find((prefix) => session.content.startsWith(prefix));
+
+      if (matchingPrefix) {
+        // 获取去掉前缀后的命令
+        const command = session.content.slice(matchingPrefix.length).trim();  
         await session.execute(command);
       }
-  
+    
       lastSelfCmdTime = Date.now();
-    });
+    });    
   }
 }
